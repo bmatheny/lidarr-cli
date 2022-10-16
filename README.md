@@ -39,3 +39,14 @@ Everyone interacting in the Lidarr project's codebases, issue trackers, chat roo
 # Links
 
 * [testdouble-standard](https://github.com/testdouble/standard)
+
+# Configs
+
+Looks in: `/etc/lidarr-cli.yml`, `~/.config/lidarr/cli.yml`, anything pointed at by `$LIDARR_CONFIG`.
+
+Looks at yaml keys:
+
+* `api_key`
+* `headers`
+* `url`
+* `verbose`
