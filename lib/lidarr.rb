@@ -1,8 +1,6 @@
 # frozen_string_literal: true
 
-require_relative "lidarr/version"
-
-module Lidarr
-  class Error < StandardError; end
-  # Your code goes here...
-end
+require "lidarr/errors"
+require "lidarr/mixins"
+require "lidarr/options"
+require "lidarr/version"

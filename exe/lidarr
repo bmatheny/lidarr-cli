@@ -1,13 +1,5 @@
 #!/usr/bin/env ruby
 
-begin
-  require "lidarr"
-rescue LoadError
-  warn "In development, you need to use `bundle exec exe/lidarr` to run your app"
-  warn "At install-time, RubyGems will make sure lib, etc. are in the load path"
-  exit 64
-end
-
 # frozen_string_literal: true
 
 require "lidarr/cli"
