@@ -12,7 +12,7 @@ Gem::Specification.new do |spec|
   spec.description = "This gem provides a CLI for working with Lidarr and your music collection. It is built on top of the Lidarr API."
   spec.homepage = "https://github.com/bmatheny/lidarr-cli"
   spec.license = "MIT"
-  spec.required_ruby_version = ">= 2.6.0"
+  spec.required_ruby_version = ">= 3.1"
 
   spec.metadata["homepage_uri"] = spec.homepage
   spec.metadata["source_code_uri"] = "https://github.com/bmatheny/lidarr-cli"
