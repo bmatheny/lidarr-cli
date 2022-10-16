@@ -2,6 +2,7 @@
 
 require_relative "../lidarr"
 require_relative "config"
+require "httparty"
 require "pp"
 require "thor"
 require "thor/group"
@@ -22,6 +23,8 @@ end
 
 module Lidarr
   class Wanted < SubCommandBase
+    include HTTParty
+
     desc "add <name> <url>", "Adds a remote named <name> for the repo at <url>"
     long_desc <<-LONGDESC
       Foo bar.
