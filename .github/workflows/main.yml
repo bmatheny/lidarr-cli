@@ -10,7 +10,7 @@ on:
 jobs:
   test:
     runs-on: ${{ matrix.os }}
-    name: Ruby ${{ matrix.ruby }}
+    name: Ruby ${{ matrix.ruby }} on OS ${{ matrix.os }}
     strategy:
       matrix:
         os: [macos-latest, ubuntu-22.04]
