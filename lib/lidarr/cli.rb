@@ -21,9 +21,28 @@ class SubCommandBase < Thor
   end
 end
 
+module HTTPHelpers
+  def self.party_opts opts
+    headers = opts.headers
+    headers["x-api-key"] = opts.api_key.get
+    {
+      headers: headers,
+      verify: false,
+      verbose: opts.verbose.get_or_else(false)
+    }
+  end
+end
+
 module Lidarr
   class Wanted < SubCommandBase
-    include HTTParty
+    URI = "/api/v1/wanted"
+
+    desc "missing", "Get missing albums"
+    def missing
+      opts = HTTPHelpers.party_opts(CLI.get_options(options))
+      response = HTTParty.get("#{opts.url.get}#{URI}/missing", opts)
+      pp response
+    end
 
     desc "add <name> <url>", "Adds a remote named <name> for the repo at <url>"
     long_desc <<-LONGDESC
@@ -59,8 +78,6 @@ module Lidarr
 
     desc "version", "prints lidarr CLI version"
     def version
-      opts = get_options
-      pp opts
       puts Lidarr::VERSION
     end
 
@@ -68,23 +85,25 @@ module Lidarr
     subcommand "wanted", Wanted
 
     no_commands do
-      def get_options
-        puts "Get_options called"
-        opts = Lidarr::Config.options_from_configs
-        if options.key?("api_key")
-          opts.api_key = options.api_key
-        end
-        if options.key?("header")
-          options.header.each { |hdr| opts.header_set hdr }
-        end
-        if options.key?("url")
-          opts.url = options.url
-        end
-        if options.key?("verbose")
-          options.verbose.each { |v| opts.verbose = v }
-        end
-        opts
-      end # def get_options
+      class << self
+        def get_options options
+          puts "Get_options called"
+          opts = Lidarr::Config.options_from_configs
+          if options.key?("api_key")
+            opts.api_key = options.api_key
+          end
+          if options.key?("header")
+            options.header.each { |hdr| opts.header_set hdr }
+          end
+          if options.key?("url")
+            opts.url = options.url
+          end
+          if options.key?("verbose")
+            options.verbose.each { |v| opts.verbose = v }
+          end
+          opts
+        end # def get_options
+      end # class << self
     end # no_commands
   end # end class CLI
 end # end module Lidarr

@@ -66,12 +66,12 @@ module Lidarr
 
     def merge other
       require_that other.is_a?(Lidarr::Options), "must be Lidarr::Options"
-      other.api_key.each ->(e) { @opts.api_key = e }
+      other.api_key.each ->(e) { self.api_key = e }
       other.headers.each do |k, v|
         @opts.headers[k] = v
       end
-      other.url.each ->(e) { @opts.url = e }
-      other.verbose.each ->(e) { @opts.verbose = e }
+      other.url.each ->(e) { self.url = e }
+      other.verbose.each ->(e) { self.verbose = e }
       self
     end
 

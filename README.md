@@ -50,3 +50,8 @@ Looks at yaml keys:
 * `headers`
 * `url`
 * `verbose`
+
+# TODO
+
+* Allow for --insecure option
+* Validate cli configs before using them
