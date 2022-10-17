@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
-require_relative "../lidarr"
-require_relative "option"
+require_relative "../../lidarr"
 require "uri"
 
 module Lidarr
