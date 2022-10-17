@@ -33,7 +33,6 @@ end
 
 module Lidarr
   class Wanted < SubCommandBase
-
     desc "missing", "Get missing albums"
     def missing
       app_options = CLIHelpers.get_options(options)

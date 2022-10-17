@@ -26,7 +26,6 @@ module Lidarr
           verbose: opts.verbose.get_or_else(false)
         }
       end
-
     end # end class Wanted
   end
 end
