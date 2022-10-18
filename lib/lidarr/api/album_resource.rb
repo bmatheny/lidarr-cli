@@ -4,7 +4,7 @@ module Lidarr
   module API
     class AlbumResource
       SAFE_PROPERTIES = ["title", "artistId", "monitored", "profileId", "duration", "albumType", "releaseDate", "genres", "artist#ArtistResource", "statistics#AlbumStatisticsResource", "grabbed"]
-      attr_accessor :id, :title, :artist, :albumType, :releaseDate, :statistics
+      attr_accessor :id, :title, :monitored, :artist, :albumType, :releaseDate, :statistics
 
       def initialize id = nil
         @id = id

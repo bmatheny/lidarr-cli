@@ -51,20 +51,27 @@ module CLIHelpers
       shell = Thor::Shell::Basic.new
       if results.is_a?(Lidarr::API::PagingResource)
         rows = []
-        rows << ["ID", "Artist Name", "Album Title", "Album Type", "Release Date"]
+        rows << ["ID", "Artist Name", "Album Title", "Monitored", "Album Type", "Release Date"]
         results.records.each do |res|
           # TODO fixme looks like Album Type is always Album?
-          rows << [res.id, res.artist.artistName, res.title, res.albumType, res.releaseDate]
+          rows << [res.id, res.artist.artistName, res.title, res.monitored, res.albumType, res.releaseDate]
         end
         shell.print_table(rows)
         puts("")
         puts("Page: #{results.page}, Total Records: #{results.total_records}, Filters: #{results.filters.inspect}, Sort Key: #{results.sort_key}")
       else
-        puts("          ID: #{results.id}")
-        puts(" Artist Name: #{results.artist.artistName}")
-        puts(" Album Title: #{results.title}")
-        puts("  Album Type: #{results.albumType}")
-        puts("Release Date: #{results.releaseDate}")
+        unless results.is_a?(Array)
+          results = [results]
+        end
+        results.each do |result|
+          puts("          ID: #{result.id}")
+          puts(" Artist Name: #{result.artist.artistName}")
+          puts(" Album Title: #{result.title}")
+          puts("   Monitored: #{result.monitored}")
+          puts("  Album Type: #{result.albumType}")
+          puts("Release Date: #{result.releaseDate}")
+          puts("")
+        end
       end
     else
       puts "Unsupported format #{options.format}"
@@ -74,6 +81,22 @@ module CLIHelpers
 end
 
 module Lidarr
+  class Album < BasicSubcommand
+    desc "monitor IDs", "Set the monitor bit for an album with id ID"
+    def monitor(*ids)
+      app_options = CLIHelpers.get_options(options)
+      results = Lidarr::API::Album.new(app_options).monitor(ids)
+      CLIHelpers.print_results(options, results)
+    end
+
+    desc "unmonitor IDs", "Unset the monitor bit for an album with id ID"
+    def unmonitor(*ids)
+      app_options = CLIHelpers.get_options(options)
+      results = Lidarr::API::Album.new(app_options).unmonitor(ids)
+      CLIHelpers.print_results(options, results)
+    end
+  end
+
   class Wanted < PagedSubcommand
     desc "missing [ID]", "Get missing albums"
     long_desc <<-LONGDESC
@@ -113,6 +136,9 @@ module Lidarr
     def version
       puts Lidarr::VERSION
     end
+
+    desc "album SUBCOMMAND [OPTIONS] [ARGS]", "work with albums"
+    subcommand "album", Album
 
     desc "wanted SUBCOMMAND [OPTIONS] [ARGS]", "work with missing or cutoff albums"
     subcommand "wanted", Wanted
