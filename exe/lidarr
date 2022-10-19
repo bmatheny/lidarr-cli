@@ -4,4 +4,4 @@
 
 require "lidarr/cli"
 
-Lidarr::CLI.start
+Lidarr::CLI::App.start

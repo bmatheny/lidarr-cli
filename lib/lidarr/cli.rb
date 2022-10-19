@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 require_relative "../lidarr"
-require_relative "config"
+require_relative "cli/option_helpers"
 require "httparty"
 require "pp"
 require "thor"
@@ -30,21 +30,6 @@ end
 
 module CLIHelpers
   extend self
-
-  def get_options options
-    opts = Lidarr::Config.options_from_configs
-    opts.merge(Lidarr::Opt.thor_to_options(options))
-  end
-
-  def get_paging_options options
-    Lidarr::API::PagingRequest.new(
-      page: options.fetch("page", nil),
-      page_size: options.fetch("page_size", nil),
-      sort_key: options.fetch("sort_key", nil),
-      sort_direction: options.fetch("sort_direction", nil),
-      filters: options.fetch("filters", nil)
-    )
-  end
 
   def print_results options, results
     if options.format == "plain"
@@ -81,25 +66,26 @@ module CLIHelpers
 end
 
 module Lidarr
-  class Album < BasicSubcommand
-    desc "monitor IDs", "Set the monitor bit for an album with id ID"
-    def monitor(*ids)
-      app_options = CLIHelpers.get_options(options)
-      results = Lidarr::API::Album.new(app_options).monitor(ids)
-      CLIHelpers.print_results(options, results)
+  module CLI
+    class Album < BasicSubcommand
+      desc "monitor IDs", "Set the monitor bit for an album with id ID"
+      def monitor(*ids)
+        app_options = OptionHelpers.get_options(options)
+        results = Lidarr::API::Album.new(app_options).monitor(ids)
+        CLIHelpers.print_results(options, results)
+      end
+
+      desc "unmonitor IDs", "Unset the monitor bit for an album with id ID"
+      def unmonitor(*ids)
+        app_options = OptionHelpers.get_options(options)
+        results = Lidarr::API::Album.new(app_options).unmonitor(ids)
+        CLIHelpers.print_results(options, results)
+      end
     end
 
-    desc "unmonitor IDs", "Unset the monitor bit for an album with id ID"
-    def unmonitor(*ids)
-      app_options = CLIHelpers.get_options(options)
-      results = Lidarr::API::Album.new(app_options).unmonitor(ids)
-      CLIHelpers.print_results(options, results)
-    end
-  end
-
-  class Wanted < PagedSubcommand
-    desc "missing [ID]", "Get missing albums"
-    long_desc <<-LONGDESC
+    class Wanted < PagedSubcommand
+      desc "missing [ID]", "Get missing albums"
+      long_desc <<-LONGDESC
       Get missing albums.
 
       If you provide an ID, it is expected that you are querying about a specific
@@ -108,42 +94,43 @@ module Lidarr
       If you pass --include-artist, each row will have additional detail.
 
       Takes standard pagination options as well.
-    LONGDESC
-    option :include_artist, type: :boolean, default: false,
-      desc: "Include artist info"
-    def missing(id = nil)
-      app_options = CLIHelpers.get_options(options)
-      paging_opts = CLIHelpers.get_paging_options(options)
-      results = Lidarr::API::Wanted.new(app_options).missing(id: id, include_artist: options.include_artist, paging_resource: paging_opts)
-      CLIHelpers.print_results(options, results)
-    end
-  end # end class Wanted
+      LONGDESC
+      option :include_artist, type: :boolean, default: false,
+        desc: "Include artist info"
+      def missing(id = nil)
+        app_options = OptionHelpers.get_options(options)
+        paging_opts = OptionHelpers.get_paging_options(options)
+        results = Lidarr::API::Wanted.new(app_options).missing(id: id, include_artist: options.include_artist, paging_resource: paging_opts)
+        CLIHelpers.print_results(options, results)
+      end
+    end # end class Wanted
 
-  class CLI < Thor
-    class_option :api_key, type: :string, aliases: "-K",
-      banner: "API_KEY",
-      desc: "The API key to use with each request"
-    class_option :header, type: :string, aliases: "-H", repeatable: true,
-      desc: "Any additional header options to be passed"
-    class_option :format, type: :string, aliases: "-F",
-      enum: %w[plain csv json yml], default: "plain",
-      desc: "Output format to use, defaults to 'plain'"
-    class_option :secure, type: :boolean, aliases: "-S",
-      desc: "Whether we should connect securely to https endpoints or not"
-    class_option :url, type: :string, aliases: "-U",
-      desc: "URL to call, should include scheme, port, and any subfolder"
-    class_option :verbose, type: :boolean, aliases: "-v", repeatable: true,
-      desc: "Increase the verbosity of the program"
+    class App < Thor
+      class_option :api_key, type: :string, aliases: "-K",
+        banner: "API_KEY",
+        desc: "The API key to use with each request"
+      class_option :header, type: :string, aliases: "-H", repeatable: true,
+        desc: "Any additional header options to be passed"
+      class_option :format, type: :string, aliases: "-F",
+        enum: %w[plain csv json yml], default: "plain",
+        desc: "Output format to use, defaults to 'plain'"
+      class_option :secure, type: :boolean, aliases: "-S",
+        desc: "Whether we should connect securely to https endpoints or not"
+      class_option :url, type: :string, aliases: "-U",
+        desc: "URL to call, should include scheme, port, and any subfolder"
+      class_option :verbose, type: :boolean, aliases: "-v", repeatable: true,
+        desc: "Increase the verbosity of the program"
 
-    desc "version", "prints lidarr CLI version"
-    def version
-      puts Lidarr::VERSION
-    end
+      desc "version", "prints lidarr CLI version"
+      def version
+        puts Lidarr::VERSION
+      end
 
-    desc "album SUBCOMMAND [OPTIONS] [ARGS]", "work with albums"
-    subcommand "album", Album
+      desc "album SUBCOMMAND [OPTIONS] [ARGS]", "work with albums"
+      subcommand "album", Album
 
-    desc "wanted SUBCOMMAND [OPTIONS] [ARGS]", "work with missing or cutoff albums"
-    subcommand "wanted", Wanted
-  end # end class CLI
+      desc "wanted SUBCOMMAND [OPTIONS] [ARGS]", "work with missing or cutoff albums"
+      subcommand "wanted", Wanted
+    end # end class CLI
+  end # end module CLI
 end # end module Lidarr

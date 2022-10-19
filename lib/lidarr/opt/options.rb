@@ -7,47 +7,35 @@ module Lidarr
   class Options
     include Lidarr::Mixins
 
-    attr_reader :logger
+    attr_reader :api_key, :headers, :logger, :secure, :url, :verbose
 
     def initialize
-      @opts = OptionsDefinition.new(Lidarr.None, {}, Lidarr.None, Lidarr.None, Lidarr.None)
+      @api_key = Lidarr.None
+      @headers = {}
       @logger = Lidarr::Logging.get progname: "lidarr"
-    end
-
-    def api_key
-      @opts.api_key
+      @secure = Lidarr.None
+      @url = Lidarr.None
+      @verbose = Lidarr.None
     end
 
     def api_key= key
-      @opts.api_key = validate_non_empty "api_key", key
+      @api_key = validate_non_empty "api_key", key
     end
 
-    def headers
-      @opts.headers
-    end
-
-    def header_set maybe_hdr
+    def headers= maybe_hdr
       name, value = validate_non_empty("header", maybe_hdr).map do |hdr|
         raise ExpectationFailedError.new("Invalid header, should be of form NAME:VALUE") unless /.+:.+/.match?(hdr)
         hdr.split(":")
       end.get
-      @opts.headers[name.strip] = value.strip
-    end
-
-    def secure
-      @opts.secure
+      @headers[name.strip] = value.strip
     end
 
     def secure= s
-      @opts.secure = Lidarr::Some(to_bool(s))
-    end
-
-    def url
-      @opts.url
+      @secure = Lidarr::Some(to_bool(s))
     end
 
     def url= url
-      @opts.url = validate_non_empty("url", url).map do |u|
+      @url = validate_non_empty("url", url).map do |u|
         uri = URI.parse(u)
         if uri.is_a?(URI::HTTP)
           u
@@ -57,10 +45,6 @@ module Lidarr
       end
     end
 
-    def verbose
-      @opts.verbose
-    end
-
     def verbose= v
       vb = to_bool(v)
       if vb
@@ -68,14 +52,14 @@ module Lidarr
       else
         @logger.less_verbose
       end
-      @opts.verbose = Lidarr::Some(vb)
+      @verbose = Lidarr::Some(vb)
     end
 
     def merge other
       require_that other.is_a?(Lidarr::Options), "must be Lidarr::Options"
       other.api_key.each ->(e) { self.api_key = e }
       other.headers.each do |k, v|
-        @opts.headers[k] = v
+        @headers[k] = v
       end
       other.secure.each ->(e) { self.secure = e }
       other.url.each ->(e) { self.url = e }
@@ -84,16 +68,6 @@ module Lidarr
     end
 
     private
-
-    attr_accessor :opts
-    OptionsDefinition = Struct.new(
-      "OptionsDefinition",
-      :api_key,
-      :headers,
-      :secure,
-      :url,
-      :verbose
-    )
 
     def validate_non_empty name, value
       msg = "#{name} must be a non-empty string"
