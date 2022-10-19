@@ -46,7 +46,7 @@ module Lidarr
         headers["Content-Type"] = "application/json"
         {
           headers: headers,
-          verify: false,
+          verify: opts.secure.get_or_else(true),
           verbose: opts.verbose.get_or_else(false),
           query: {}
         }

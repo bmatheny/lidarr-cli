@@ -51,7 +51,24 @@ Looks at yaml keys:
 * `url`
 * `verbose`
 
+# Done
+
+* `lidarr wanted missing [--include-artist]`
+* `lidarr album monitor ID[,ID*]`
+* `lidarr album unmonitor ID[,ID*]`
+
 # TODO
 
-* Allow for --insecure option
+* Something like:
+    - lidarr tag list # /api/v1/tag
+    - lidarr artist list-by-tag $favorites
+    - OR
+    - lidarr artist search "$name"
+    - lidarr album list $artistId (can also take albumIds, includeAllArtistAlbums)
+    - lidarr album monitor $albumId,albumId,etc
+* lidarr artist edit --monitor=true/false --monitor-new-albums=enum --quality-profile=ID --metadata-profile=ID artistId
+* Add cutoff to wanted class
+* blocklist
+* Check the queue, delete from the queue, clear the queue
+* search /api/v1/search
 * Validate cli configs before using them

@@ -125,8 +125,11 @@ module Lidarr
       desc: "The API key to use with each request"
     class_option :header, type: :string, aliases: "-H", repeatable: true,
       desc: "Any additional header options to be passed"
-    class_option :format, type: :string, aliases: "-F", enum: %w[plain csv json yml], default: "plain",
+    class_option :format, type: :string, aliases: "-F",
+      enum: %w[plain csv json yml], default: "plain",
       desc: "Output format to use, defaults to 'plain'"
+    class_option :secure, type: :boolean, aliases: "-S",
+      desc: "Whether we should connect securely to https endpoints or not"
     class_option :url, type: :string, aliases: "-U",
       desc: "URL to call, should include scheme, port, and any subfolder"
     class_option :verbose, type: :boolean, aliases: "-v", repeatable: true,

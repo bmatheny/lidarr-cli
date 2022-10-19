@@ -10,7 +10,7 @@ module Lidarr
     attr_reader :logger
 
     def initialize
-      @opts = OptionsDefinition.new(Lidarr.None, {}, Lidarr.None, Lidarr.None)
+      @opts = OptionsDefinition.new(Lidarr.None, {}, Lidarr.None, Lidarr.None, Lidarr.None)
       @logger = Lidarr::Logging.get progname: "lidarr"
     end
 
@@ -32,6 +32,14 @@ module Lidarr
         hdr.split(":")
       end.get
       @opts.headers[name.strip] = value.strip
+    end
+
+    def secure
+      @opts.secure
+    end
+
+    def secure= s
+      @opts.secure = Lidarr::Some(to_bool(s))
     end
 
     def url
@@ -69,6 +77,7 @@ module Lidarr
       other.headers.each do |k, v|
         @opts.headers[k] = v
       end
+      other.secure.each ->(e) { self.secure = e }
       other.url.each ->(e) { self.url = e }
       other.verbose.each ->(e) { self.verbose = e }
       self
@@ -81,6 +90,7 @@ module Lidarr
       "OptionsDefinition",
       :api_key,
       :headers,
+      :secure,
       :url,
       :verbose
     )
