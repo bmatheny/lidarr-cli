@@ -13,6 +13,12 @@ require "thor/group"
 module Lidarr
   module CLI
     class BasicSubcommand < Thor
+      no_commands do
+        def logger
+          Lidarr::Logging.get
+        end
+      end
+
       class << self
         def banner(command, namespace = nil, subcommand = false)
           "#{basename} #{subcommand_prefix} #{command.usage}"
@@ -65,6 +71,7 @@ module Lidarr
       def missing(id = nil)
         app_options = OptionHelpers.get_options(options)
         paging_opts = OptionHelpers.thor_to_paging_options(options)
+        logger.debug "missing(id=#{id || "none"}, include_artists=#{options.include_artists ? "true" : "false"}, pager=#{paging_opts})"
         results = Lidarr::API::Wanted.new(app_options).missing(id: id, include_artist: options.include_artist, paging_resource: paging_opts)
         Output.print_results(options.format, results)
       end
@@ -74,6 +81,8 @@ module Lidarr
       class_option :api_key, type: :string, aliases: "-K",
         banner: "API_KEY",
         desc: "The API key to use with each request"
+      class_option :config, type: :string, aliases: "-C",
+        desc: "Configuration file with common options such as your api_key"
       class_option :header, type: :string, aliases: "-H", repeatable: true,
         desc: "Any additional header options to be passed"
       class_option :format, type: :string, aliases: "-F",

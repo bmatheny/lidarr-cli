@@ -27,6 +27,18 @@ module Lidarr
         q[:filters] = @filters unless @filters.nil?
         q
       end
+
+      def to_s
+        opts = []
+        opts << "page=#{page}" unless page.nil?
+        opts << "pageSize=#{page_size}" unless page_size.nil?
+        opts << "sortKey=#{sort_key}" unless sort_key.nil?
+        opts << "sortDirection=#{sort_direction}" unless sort_direction.nil?
+        opts << "filters=#{filters}" unless filters.nil?
+        opts_string = opts.join(", ")
+        opts_string = "default" if opts_string.empty?
+        "PagingRequest(#{opts_string})"
+      end
     end # end PagingRequest
 
     class PagingResource < PagingRequest
