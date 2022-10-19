@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 require_relative "../mixins"
-require_relative "../opt/options"
+require_relative "../options"
 
 module Lidarr
   module CLI
