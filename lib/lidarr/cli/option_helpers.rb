@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require_relative "../api/paging_resource"
+require_relative "../api/paging"
 require_relative "option_sources"
 
 module Lidarr
@@ -17,7 +17,7 @@ module Lidarr
         opts.merge(OptionSources.thor_to_options(options))
       end
 
-      def get_paging_options options
+      def thor_to_paging_options options
         Lidarr::API::PagingRequest.new(
           page: options.fetch("page", nil),
           page_size: options.fetch("page_size", nil),
