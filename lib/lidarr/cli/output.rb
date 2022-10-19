@@ -40,7 +40,6 @@ module Lidarr
           exit 1
         end
       end
-
     end # end module Output
   end # end module CLI
 end # end module Lidarr

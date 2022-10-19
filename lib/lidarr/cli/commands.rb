@@ -8,10 +8,10 @@ require "pp"
 require "thor"
 require "thor/group"
 
+# Thor docs: https://github.com/rails/thor/wiki
+
 module Lidarr
   module CLI
-
-    # Thor docs: https://github.com/rails/thor/wiki
     class BasicSubcommand < Thor
       class << self
         def banner(command, namespace = nil, subcommand = false)
@@ -97,6 +97,5 @@ module Lidarr
       desc "wanted SUBCOMMAND [OPTIONS] [ARGS]", "work with missing or cutoff albums"
       subcommand "wanted", Wanted
     end # end class App
-
-  end
+  end # end module CLI
 end
