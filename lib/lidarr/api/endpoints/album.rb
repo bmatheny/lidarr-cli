@@ -24,6 +24,14 @@ module Lidarr
         end
       end
 
+      def search(term)
+        uri = "#{opts.url.get}#{URI}/lookup"
+        http_options = party_opts
+        http_options[:query][:term] = term
+        res = HTTParty.get(uri, http_options).parsed_response
+        res.map { |rec| AlbumResource.from_record(rec) }
+      end
+
       private
 
       def make_monitor_request album_ids, monitored

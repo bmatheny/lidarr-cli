@@ -38,6 +38,14 @@ module Lidarr
         res.map { |r| ArtistResource.new.populate(r) }
       end
 
+      def search(term)
+        uri = "#{opts.url.get}#{URI}/lookup"
+        http_options = party_opts
+        http_options[:query][:term] = term
+        res = HTTParty.get(uri, http_options).parsed_response
+        res.map { |r| ArtistResource.new.populate(r) }
+      end
+
       private
 
       def is_uuid(uuid)

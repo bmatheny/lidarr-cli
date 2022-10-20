@@ -46,6 +46,14 @@ module Lidarr
         results = Lidarr::API::Album.new(app_options).unmonitor(ids)
         Output.print_results(options.output, results)
       end
+
+      desc "search TERM", "search for albums"
+      def search(term)
+        app_options = OptionHelpers.get_options(options)
+        Lidarr.logger.debug "album.search(term=#{term})"
+        results = Lidarr::API::Album.new(app_options).search(term)
+        Output.print_results(options.output, results)
+      end
     end
 
     class Artist < PagedSubcommand
@@ -70,6 +78,14 @@ module Lidarr
         app_options = OptionHelpers.get_options(options)
         Lidarr.logger.debug "artist.list"
         results = Lidarr::API::Artist.new(app_options).list
+        Output.print_results(options.output, results)
+      end
+
+      desc "search TERM", "search for artists"
+      def search(term)
+        app_options = OptionHelpers.get_options(options)
+        Lidarr.logger.debug "artist.search(term=#{term})"
+        results = Lidarr::API::Artist.new(app_options).search(term)
         Output.print_results(options.output, results)
       end
     end
