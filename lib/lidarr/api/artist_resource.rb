@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 require_relative "resource"
+require_relative "artist_statistics_resource"
+require_relative "album_resource"
 
 module Lidarr
   module API
@@ -21,8 +23,8 @@ module Lidarr
           "artistType",
           "disambiguation",
           "links", # Array<Links>
-          "nextAlbum", # Album
-          "lastAlbum", # Album
+          ["nextAlbum", AlbumModel], # Album
+          ["lastAlbum", AlbumModel], # Album
           "images", # Array<MediaCover>
           "members", # Array<Member>
           "remotePoster",

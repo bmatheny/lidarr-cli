@@ -10,7 +10,7 @@ module Lidarr
       # PUT /api/v1/album/monitor, payload {albumIds: [ID], monitored: false}
       def monitor album_ids
         require_type album_ids, Array
-        response = make_request(album_ids, true)
+        response = make_monitor_request(album_ids, true)
         response.map do |rec|
           AlbumResource.from_record(rec)
         end
@@ -18,7 +18,7 @@ module Lidarr
 
       def unmonitor album_ids
         require_type album_ids, Array
-        response = make_request(album_ids, false)
+        response = make_monitor_request(album_ids, false)
         response.map do |rec|
           AlbumResource.from_record(rec)
         end
@@ -26,7 +26,7 @@ module Lidarr
 
       private
 
-      def make_request album_ids, monitored
+      def make_monitor_request album_ids, monitored
         http_options = party_opts
         http_options[:query].merge!({albumIds: album_ids, monitored: monitored})
         uri = "#{@opts.url.get}#{URI}/monitor"

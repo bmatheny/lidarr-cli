@@ -48,13 +48,39 @@ module Lidarr
       end
     end
 
-    class Tags < BasicSubcommand
+    class Artist < PagedSubcommand
+      desc "get ID", "get artist attributes"
+      long_desc <<-LONGDESC
+      Get an artist
+
+      If a numeric ID is specified, the artist with that ID is returned.
+      If a UUID is specified, the artist with that music brainz ID is returned.
+
+      Takes standard pagination options as well.
+      LONGDESC
+      def get(id)
+        app_options = OptionHelpers.get_options(options)
+        Lidarr.logger.debug "artist.get(id=#{id})"
+        results = Lidarr::API::Artist.new(app_options).get(id)
+        Output.print_results(options.output, results)
+      end
+
+      desc "list", "list all artists and associated attributes"
+      def list
+        app_options = OptionHelpers.get_options(options)
+        Lidarr.logger.debug "artist.list"
+        results = Lidarr::API::Artist.new(app_options).list
+        Output.print_results(options.output, results)
+      end
+    end
+
+    class Tag < BasicSubcommand
       desc "get [ID] [--details]", "list all tags and their IDs"
       option :details, type: :boolean, default: false,
         desc: "Include additional tag info"
       def get(id = nil)
         app_options = OptionHelpers.get_options(options)
-        Lidarr.logger.debug "tags.get(id=#{id || "none"}, details=#{options.details})"
+        Lidarr.logger.debug "tag.get(id=#{id || "none"}, details=#{options.details})"
         results = if options.details
           Lidarr::API::Tag.new(app_options).get_details(id)
         else
@@ -114,8 +140,11 @@ module Lidarr
       desc "album SUBCOMMAND [OPTIONS] [ARGS]", "work with albums"
       subcommand "album", Album
 
-      desc "tags SUBCOMMAND [OPTIONS] [ARGS]", "work with tags"
-      subcommand "tags", Tags
+      desc "artist SUBCOMMAND [OPTIONS] [ARGS]", "work with artists"
+      subcommand "artist", Artist
+
+      desc "tag SUBCOMMAND [OPTIONS] [ARGS]", "work with tags"
+      subcommand "tag", Tag
 
       desc "wanted SUBCOMMAND [OPTIONS] [ARGS]", "work with missing or cutoff albums"
       subcommand "wanted", Wanted

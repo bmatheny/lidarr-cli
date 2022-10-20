@@ -2,6 +2,7 @@
 
 # ref https://raw.githubusercontent.com/lidarr/Lidarr/develop/src/Lidarr.Api.V1/openapi.json
 require_relative "api/album"
+require_relative "api/artist"
 require_relative "api/paging"
 require_relative "api/tag"
 require_relative "api/wanted"

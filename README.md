@@ -56,6 +56,9 @@ Looks at yaml keys:
 * `lidarr wanted missing [--include-artist]`
 * `lidarr album monitor ID[,ID*]`
 * `lidarr album unmonitor ID[,ID*]`
+* `lidarr tag get [ID] [--details]`
+* `lidarr artist get ID`
+* `lidarr artist list`
 
 # TODO
 

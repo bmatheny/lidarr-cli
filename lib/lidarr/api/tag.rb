@@ -36,12 +36,6 @@ module Lidarr
         end
       end
 
-      # POST /api/v1/tag
-      # BODY is TagResource
-      # Response is TagResource
-      def update(tag_resource)
-      end
-
       # GET path /api/v1/tag/detail/{id}
       #     Response: TagDetailsResource
       # GET path /api/v1/tag/detail
@@ -59,6 +53,12 @@ module Lidarr
         else
           TagDetailsResource.new.populate(res)
         end
+      end
+
+      # POST /api/v1/tag
+      # BODY is TagResource
+      # Response is TagResource
+      def update(tag_resource)
       end
     end
   end # end API module
