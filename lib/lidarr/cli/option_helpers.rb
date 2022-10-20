@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require_relative "../api/paging"
+require_relative "../api"
 require_relative "option_sources"
 
 module Lidarr

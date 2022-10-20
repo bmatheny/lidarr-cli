@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
 require_relative "resource"
-require_relative "artist_statistics_resource"
-require_relative "album_resource"
+require_relative "../resources/artist_statistics_resource"
+require_relative "../resources/album_resource"
 
 module Lidarr
   module API

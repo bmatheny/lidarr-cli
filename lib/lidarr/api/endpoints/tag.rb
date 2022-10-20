@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 require_relative "endpoint"
-require_relative "tag_resource"
+require_relative "../resources/tag_resource"
 
 module Lidarr
   module API

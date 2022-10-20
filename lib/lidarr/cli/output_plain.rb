@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
-require_relative "../api/paging"
-require_relative "../api/tag_resource"
+require_relative "../api"
 require_relative "../logging"
 require "thor"
 
