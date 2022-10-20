@@ -60,11 +60,11 @@ module Lidarr
         desc: "Include additional tag info"
       def get(id = nil)
         app_options = OptionHelpers.get_options(options)
-        logger.debug "tags.get(id=#{id || "none"}, details=#{options.details.to_s})"
-        if options.details
-          results = Lidarr::API::Tag.new(app_options).get_details(id)
+        logger.debug "tags.get(id=#{id || "none"}, details=#{options.details})"
+        results = if options.details
+          Lidarr::API::Tag.new(app_options).get_details(id)
         else
-          results = Lidarr::API::Tag.new(app_options).get(id)
+          Lidarr::API::Tag.new(app_options).get(id)
         end
         unless results.is_a?(Array)
           results = [results]
