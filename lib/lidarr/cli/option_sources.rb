@@ -68,8 +68,7 @@ module Lidarr
           else
             abort "Invalid type #{type} found"
           end
-          result[map_key] = new_value
-          result
+          result.store(map_key, new_value)
         end
       end
 

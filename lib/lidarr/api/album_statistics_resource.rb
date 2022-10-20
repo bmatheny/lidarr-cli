@@ -1,25 +1,22 @@
 # frozen_string_literal: true
 
+require_relative "resource"
+
 module Lidarr
   module API
-    class AlbumStatisticsResource
-      SAFE_PROPERTIES = ["trackFileCount", "trackCount", "totalTrackCount", "sizeOnDisk", "percentOfTracks"]
-
-      attr_accessor :trackFileCount, :trackCount, :totalTrackCount, :sizeOnDisk, :percentOfTracks
-
-      def to_s
-        res = SAFE_PROPERTIES.map do |attr|
-          "#{attr}=\"#{send(attr.to_sym)}\""
-        end.join(", ")
-        "AlbumStatisticsResource(#{res})"
+    class AlbumStatisticsResource < Resource
+      def initialize
+        super()
+        register_property "trackFileCount"
+        register_property "trackCount"
+        register_property "totalTrackCount"
+        register_property "sizeOnDisk"
+        register_property "percentOfTracks"
       end
 
+      # TODO remove me this is legacy
       def self.from_record record
-        r = AlbumStatisticsResource.new
-        SAFE_PROPERTIES.each do |attr|
-          r.send("#{attr}=", record.fetch(attr, 0))
-        end
-        r
+        AlbumStatisticsResource.new.populate(record)
       end
     end
   end # end API module

@@ -54,6 +54,28 @@ module Lidarr
       end
     end
 
+    class Tags < BasicSubcommand
+      desc "get [ID] [--details]", "list all tags and their IDs"
+      option :details, type: :boolean, default: false,
+        desc: "Include additional tag info"
+      def get(id = nil)
+        app_options = OptionHelpers.get_options(options)
+        logger.debug "tags.get(id=#{id || "none"}, details=#{options.details.to_s})"
+        if options.details
+          results = Lidarr::API::Tag.new(app_options).get_details(id)
+        else
+          results = Lidarr::API::Tag.new(app_options).get(id)
+        end
+        unless results.is_a?(Array)
+          results = [results]
+        end
+        results.each do |result|
+          puts result
+        end
+        # Output.print_results(options.format, results)
+      end
+    end
+
     class Wanted < PagedSubcommand
       desc "missing [ID]", "Get missing albums"
       long_desc <<-LONGDESC
@@ -102,6 +124,9 @@ module Lidarr
 
       desc "album SUBCOMMAND [OPTIONS] [ARGS]", "work with albums"
       subcommand "album", Album
+
+      desc "tags SUBCOMMAND [OPTIONS] [ARGS]", "work with tags"
+      subcommand "tags", Tags
 
       desc "wanted SUBCOMMAND [OPTIONS] [ARGS]", "work with missing or cutoff albums"
       subcommand "wanted", Wanted
