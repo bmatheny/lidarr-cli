@@ -36,4 +36,9 @@ module Lidarr
     end # end get_logger
     module_function :get_logger
   end # end module Logger
+
+  def logger
+    Lidarr::Logging.get
+  end
+  module_function :logger
 end # end module Lidarr

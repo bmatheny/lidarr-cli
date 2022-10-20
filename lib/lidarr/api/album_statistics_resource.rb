@@ -13,11 +13,6 @@ module Lidarr
         register_property "sizeOnDisk"
         register_property "percentOfTracks"
       end
-
-      # TODO remove me this is legacy
-      def self.from_record record
-        AlbumStatisticsResource.new.populate(record)
-      end
     end
   end # end API module
 end

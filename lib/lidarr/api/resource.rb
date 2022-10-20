@@ -7,11 +7,15 @@ module Lidarr
         @_names = {}
       end
 
+      def self.from_record record
+        const_get(name).new.populate(record)
+      end
+
       def populate record
         @_names.each do |key, type|
           next unless record.key?(key)
           val = record[key]
-          val = Lidarr::API.const_get(type).new.populate(record) unless type.nil?
+          val = type.new.populate(record[key]) unless type.nil?
           send("#{key}=".to_sym, val)
         end
         self

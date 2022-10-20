@@ -13,12 +13,6 @@ require "thor/group"
 module Lidarr
   module CLI
     class BasicSubcommand < Thor
-      no_commands do
-        def logger
-          Lidarr::Logging.get
-        end
-      end
-
       class << self
         def banner(command, namespace = nil, subcommand = false)
           "#{basename} #{subcommand_prefix} #{command.usage}"
@@ -43,14 +37,14 @@ module Lidarr
       def monitor(*ids)
         app_options = OptionHelpers.get_options(options)
         results = Lidarr::API::Album.new(app_options).monitor(ids)
-        Output.print_results(options.format, results)
+        Output.print_results(options.output, results)
       end
 
       desc "unmonitor IDs", "Unset the monitor bit for an album with id ID"
       def unmonitor(*ids)
         app_options = OptionHelpers.get_options(options)
         results = Lidarr::API::Album.new(app_options).unmonitor(ids)
-        Output.print_results(options.format, results)
+        Output.print_results(options.output, results)
       end
     end
 
@@ -60,19 +54,13 @@ module Lidarr
         desc: "Include additional tag info"
       def get(id = nil)
         app_options = OptionHelpers.get_options(options)
-        logger.debug "tags.get(id=#{id || "none"}, details=#{options.details})"
+        Lidarr.logger.debug "tags.get(id=#{id || "none"}, details=#{options.details})"
         results = if options.details
           Lidarr::API::Tag.new(app_options).get_details(id)
         else
           Lidarr::API::Tag.new(app_options).get(id)
         end
-        unless results.is_a?(Array)
-          results = [results]
-        end
-        results.each do |result|
-          puts result
-        end
-        # Output.print_results(options.format, results)
+        Output.print_results(options.output, results)
       end
     end
 
@@ -93,9 +81,9 @@ module Lidarr
       def missing(id = nil)
         app_options = OptionHelpers.get_options(options)
         paging_opts = OptionHelpers.thor_to_paging_options(options)
-        logger.debug "missing(id=#{id || "none"}, include_artists=#{options.include_artists ? "true" : "false"}, pager=#{paging_opts})"
+        Lidarr.logger.debug "missing(id=#{id || "none"}, include_artists=#{options.include_artists ? "true" : "false"}, pager=#{paging_opts})"
         results = Lidarr::API::Wanted.new(app_options).missing(id: id, include_artist: options.include_artist, paging_resource: paging_opts)
-        Output.print_results(options.format, results)
+        Output.print_results(options.output, results)
       end
     end # end class Wanted
 
@@ -107,7 +95,8 @@ module Lidarr
         desc: "Configuration file with common options such as your api_key"
       class_option :header, type: :string, aliases: "-H", repeatable: true,
         desc: "Any additional header options to be passed"
-      class_option :format, type: :string, aliases: "-F",
+      # TODO add format option, allow specifying custom format instead of depending on canned output
+      class_option :output, type: :string, aliases: "-O",
         enum: %w[plain csv json yml], default: "plain",
         desc: "Output format to use, defaults to 'plain'"
       class_option :secure, type: :boolean, aliases: "-S",
