@@ -2,6 +2,7 @@
 
 require_relative "../api"
 require_relative "../logging"
+require_relative "../mixins"
 require "thor"
 
 module Lidarr
@@ -10,12 +11,19 @@ module Lidarr
       module Plain
         extend self
 
+        include Lidarr::Mixins
+
         def print_results results
           if results.is_a?(Lidarr::API::PagingResource)
             extras = "Page: #{results.page}, Total Records: #{results.total_records}, Filters: #{results.filters.inspect}, Sort Key: #{results.sort_key}"
             results = results.records
           end
-          results = make_array(results)
+          results = Array(results)
+
+          if results.empty?
+            puts "No results found"
+            return
+          end
 
           case peek(results)
           when Lidarr::API::AlbumResource
@@ -72,10 +80,6 @@ module Lidarr
           truncate("#{maybe_album.id},#{maybe_album.title}", max_length)
         end
 
-        def make_array value
-          value.is_a?(Array) ? value : [value]
-        end
-
         def print_structured_resource results, table_description
           # TODO: If results.size == 1 we want a vertical layout not a horizontal one
           shell = Thor::Shell::Basic.new
@@ -91,7 +95,7 @@ module Lidarr
         end
 
         def safe_join value, join_str = ","
-          value.nil? ? "" : make_array(value).join(join_str)
+          Array(value).join(join_str)
         end
 
         def truncate string, max

@@ -6,8 +6,6 @@ require_relative "../resources/tag_resource"
 module Lidarr
   module API
     class Tag < Endpoint
-      URI = "/api/v1/tag"
-
       # PUT, body
       def create(tag_resource)
         # PUT /api/v1/tag/{id}
@@ -24,16 +22,7 @@ module Lidarr
       # GET path /api/v1/tag
       #     Response Array<TagResource>
       def get(id = nil)
-        uri = "#{opts.url.get}#{URI}"
-        uri = "#{uri}/#{id}" unless id.nil?
-
-        http_options = party_opts
-        res = HTTParty.get(uri, http_options).parsed_response
-        if id.nil?
-          res.map { |r| TagResource.new.populate(r) }
-        else
-          TagResource.new.populate(res)
-        end
+        make_request :get, path: make_id_path(id)
       end
 
       # GET path /api/v1/tag/detail/{id}
@@ -43,16 +32,7 @@ module Lidarr
       # TagDetailsResource does include an array of artistIds (along with a bunch fo stuff we can't
       # use)
       def get_details(id = nil)
-        uri = "#{opts.url.get}#{URI}/detail"
-        uri = "#{uri}/#{id}" unless id.nil?
-
-        http_options = party_opts
-        res = HTTParty.get(uri, http_options).parsed_response
-        if id.nil?
-          res.map { |r| TagDetailsResource.new.populate(r) }
-        else
-          TagDetailsResource.new.populate(res)
-        end
+        make_request :get, path: "/detail#{make_id_path(id)}"
       end
 
       # POST /api/v1/tag
@@ -60,6 +40,20 @@ module Lidarr
       # Response is TagResource
       def update(tag_resource)
       end
-    end
+
+      protected
+
+      def get_uri
+        "/api/v1/tag"
+      end
+
+      def process_2xx_response response
+        if response.request.path.to_s.include?("/detail")
+          make_array(response.parsed_response).map { |r| TagDetailsResource.new.populate(r) }
+        else
+          make_array(response.parsed_response).map { |r| TagResource.new.populate(r) }
+        end
+      end
+    end # end Tag class
   end # end API module
 end

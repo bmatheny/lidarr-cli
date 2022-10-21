@@ -13,6 +13,8 @@ require "thor/group"
 module Lidarr
   module CLI
     class BasicSubcommand < Thor
+      include Lidarr::Mixins
+
       class << self
         def banner(command, namespace = nil, subcommand = false)
           "#{basename} #{subcommand_prefix} #{command.usage}"
@@ -35,13 +37,13 @@ module Lidarr
     class Album < BasicSubcommand
       desc "monitor IDs", "Set the monitor bit for an album with id ID"
       def monitor(*ids)
-        Lidarr::Mixins.require_that(ids.size > 0, "Need to specify at least one ID")
+        require_that(ids.size > 0, "Need to specify at least one ID")
         make_request "abum.unmonitor(#{ids.join(",")})", ->(a) { a.monitor(ids) }
       end
 
       desc "unmonitor IDs", "Unset the monitor bit for an album with id ID"
       def unmonitor(*ids)
-        Lidarr::Mixins.require_that(ids.size > 0, "Need to specify at least one ID")
+        require_that(ids.size > 0, "Need to specify at least one ID")
         make_request "abum.unmonitor(#{ids.join(",")})", ->(a) { a.unmonitor(ids) }
       end
 
@@ -52,7 +54,7 @@ module Lidarr
 
       desc "get_by_album_id IDs", "Specify one or more IDs separated by spaces"
       def get_by_album_id(*ids)
-        Lidarr::Mixins.require_that(ids.size > 0, "Need to specify at least one ID")
+        require_that(ids.size > 0, "Need to specify at least one ID")
         make_request "album.get_by_album_id(#{ids.join(",")})", ->(a) { a.get(album_ids: ids) }
       end
 
@@ -90,26 +92,29 @@ module Lidarr
       Takes standard pagination options as well.
       LONGDESC
       def get(id)
-        app_options = OptionHelpers.get_options(options)
-        Lidarr.logger.debug "artist.get(id=#{id})"
-        results = Lidarr::API::Artist.new(app_options).get(id)
-        Output.print_results(options.output, results)
+        make_request "artist.get(id=#{id})", ->(a) { a.get(id) }
       end
 
       desc "list", "list all artists and associated attributes"
       def list
-        app_options = OptionHelpers.get_options(options)
-        Lidarr.logger.debug "artist.list"
-        results = Lidarr::API::Artist.new(app_options).list
-        Output.print_results(options.output, results)
+        make_request "artist.list()", ->(a) { a.list }
       end
 
       desc "search TERM", "search for artists"
       def search(term)
-        app_options = OptionHelpers.get_options(options)
-        Lidarr.logger.debug "artist.search(term=#{term})"
-        results = Lidarr::API::Artist.new(app_options).search(term)
-        Output.print_results(options.output, results)
+        make_request "artist.search(term=#{term})", ->(a) { a.search(term) }
+      end
+
+      private
+
+      no_commands do
+        def make_request from, block
+          app_options = OptionHelpers.get_options(options)
+          Lidarr.logger.debug from
+          app = Lidarr::API::Artist.new(app_options)
+          results = block.call(app)
+          Output.print_results(options.output, results)
+        end
       end
     end
 
@@ -130,6 +135,24 @@ module Lidarr
     end
 
     class Wanted < PagedSubcommand
+      class_option :include_artist, type: :boolean, default: false,
+        desc: "Include artist info"
+
+      desc "cutoff [ID]", "Get albums with an unmet cutoff"
+      long_desc <<-LONGDESC
+      Get albums you have which for one reason or another do not meet their specified cutoff.
+
+      If you provide an ID, it is expected that you are querying about a specific
+      album. The ID is optional.
+
+      If you pass --include-artist, each row will have additional detail.
+
+      Takes standard pagination options as well.
+      LONGDESC
+      def cutoff(id = nil)
+        make_request(:cutoff, id)
+      end
+
       desc "missing [ID]", "Get missing albums"
       long_desc <<-LONGDESC
       Get missing albums.
@@ -141,14 +164,27 @@ module Lidarr
 
       Takes standard pagination options as well.
       LONGDESC
-      option :include_artist, type: :boolean, default: false,
-        desc: "Include artist info"
       def missing(id = nil)
-        app_options = OptionHelpers.get_options(options)
-        paging_opts = OptionHelpers.thor_to_paging_options(options)
-        Lidarr.logger.debug "missing(id=#{id || "none"}, include_artists=#{options.include_artists ? "true" : "false"}, pager=#{paging_opts})"
-        results = Lidarr::API::Wanted.new(app_options).missing(id: id, include_artist: options.include_artist, paging_resource: paging_opts)
-        Output.print_results(options.output, results)
+        make_request(:missing, id)
+      end
+
+      private
+
+      no_commands do
+        def make_from src, maybe_id, paging_opts
+          id = maybe_id || "none"
+          artists = to_bool(options.include_artists).to_s
+          "#{src}(id=#{id}, include_artists=#{artists}, pager=#{paging_opts})"
+        end
+
+        def make_request src, id
+          app_options = OptionHelpers.get_options(options)
+          paging_opts = OptionHelpers.thor_to_paging_options(options)
+          Lidarr.logger.debug make_from(src.to_s, id, paging_opts)
+          app = Lidarr::API::Wanted.new(app_options)
+          results = app.send(src, id: id, include_artist: options.include_artist, paging_resource: paging_opts)
+          Output.print_results(options.output, results)
+        end
       end
     end # end class Wanted
 

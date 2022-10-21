@@ -53,27 +53,25 @@ Looks at yaml keys:
 
 # Done
 
-* `lidarr wanted missing [--include-artist]`
 * `lidarr album monitor ID[,ID*]`
 * `lidarr album unmonitor ID[,ID*]`
-* `lidarr tag get [ID] [--details]`
+* `lidarr album get_by_artist_id ID`
+* `lidarr album get_by_album_id ID[,ID*]`
+* `lidarr album get_by_foreign_album_id ID`
+* `lidarr album search TERM`
 * `lidarr artist get ID`
 * `lidarr artist list`
 * `lidarr artist search TERM`
-* `lidarr album search TERM`
+* `lidarr tag get [ID] [--details]`
+* `lidarr wanted cutoff [ID] [--include-artist]`
+* `lidarr wanted missing [ID] [--include-artist]`
 
 # TODO
 
-* Something like:
-    - lidarr tag list # /api/v1/tag
-    - lidarr artist list-by-tag $favorites
-    - OR
-    - lidarr artist search "$name"
-    - lidarr album list $artistId (can also take albumIds, includeAllArtistAlbums)
-    - lidarr album monitor $albumId,albumId,etc
+* Add --format option
+* Create classes from json schema instead of code
 * lidarr artist edit --monitor=true/false --monitor-new-albums=enum --quality-profile=ID --metadata-profile=ID artistId
-* Add cutoff to wanted class
 * blocklist
 * Check the queue, delete from the queue, clear the queue
-* search /api/v1/search
 * Validate cli configs before using them
+* Replace HTTParty with just a small Net/HTTP wrapper

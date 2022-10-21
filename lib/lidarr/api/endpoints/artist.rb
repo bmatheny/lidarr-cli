@@ -5,45 +5,35 @@ require_relative "endpoint"
 module Lidarr
   module API
     class Artist < Endpoint
-      URI = "/api/v1/artist"
-
       # GET path /api/v1/artist/{id}
       #     Response ArtistResource
-      # GET path /api/v1/artist
-      #     Response Array<ArtistResource>
       def get(id)
-        uri = "#{opts.url.get}#{URI}"
-        http_options = party_opts
-
+        uri = is_uuid(id) ? "" : make_id_path(id)
+        hopts = party_opts
         if is_uuid(id)
-          http_options[:query][:mbId] = id
-        else
-          uri = "#{uri}/#{id}"
+          hopts[:query][:mbId] = id
         end
-
-        res = HTTParty.get(uri, http_options).parsed_response
-        pp res
-        if is_uuid(id)
-          res.map { |r| ArtistResource.new.populate(r) }
-        else
-          ArtistResource.new.populate(res)
-        end
+        make_request :get, path: uri, http_options: hopts
       end
 
+      # GET path /api/v1/artist
+      #     Response Array<ArtistResource>
       def list
-        uri = "#{opts.url.get}#{URI}"
-        http_options = party_opts
-
-        res = HTTParty.get(uri, http_options).parsed_response
-        res.map { |r| ArtistResource.new.populate(r) }
+        make_request :get
       end
 
       def search(term)
-        uri = "#{opts.url.get}#{URI}/lookup"
-        http_options = party_opts
-        http_options[:query][:term] = term
-        res = HTTParty.get(uri, http_options).parsed_response
-        res.map { |r| ArtistResource.new.populate(r) }
+        make_request :get, path: "/lookup", http_options: party_opts(term: term)
+      end
+
+      protected
+
+      def get_uri
+        "/api/v1/artist"
+      end
+
+      def process_2xx_response response
+        make_array(response.parsed_response).map { |r| ArtistResource.new.populate(r) }
       end
 
       private

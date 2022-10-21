@@ -2,6 +2,19 @@
 
 # frozen_string_literal: true
 
+require "lidarr"
 require "lidarr/cli"
+require "thor"
 
-Lidarr::CLI::App.start
+shell = Thor::Shell::Color.new
+
+begin
+  Lidarr::CLI::App.start
+rescue Lidarr::WellFormedHttpError => e
+  shell.say_error "Something went wrong, but it may be fixable!", :red
+  shell.say_error "Fortunately, this can _probably_ be fixed. Error message was as follows:"
+  puts ""
+  shell.say_error e.message
+
+  exit 1
+end
