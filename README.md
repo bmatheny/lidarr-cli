@@ -59,6 +59,8 @@ Looks at yaml keys:
 * `lidarr tag get [ID] [--details]`
 * `lidarr artist get ID`
 * `lidarr artist list`
+* `lidarr artist search TERM`
+* `lidarr album search TERM`
 
 # TODO
 

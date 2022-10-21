@@ -35,24 +35,47 @@ module Lidarr
     class Album < BasicSubcommand
       desc "monitor IDs", "Set the monitor bit for an album with id ID"
       def monitor(*ids)
-        app_options = OptionHelpers.get_options(options)
-        results = Lidarr::API::Album.new(app_options).monitor(ids)
-        Output.print_results(options.output, results)
+        Lidarr::Mixins.require_that(ids.size > 0, "Need to specify at least one ID")
+        make_request "abum.unmonitor(#{ids.join(",")})", ->(a) { a.monitor(ids) }
       end
 
       desc "unmonitor IDs", "Unset the monitor bit for an album with id ID"
       def unmonitor(*ids)
-        app_options = OptionHelpers.get_options(options)
-        results = Lidarr::API::Album.new(app_options).unmonitor(ids)
-        Output.print_results(options.output, results)
+        Lidarr::Mixins.require_that(ids.size > 0, "Need to specify at least one ID")
+        make_request "abum.unmonitor(#{ids.join(",")})", ->(a) { a.unmonitor(ids) }
+      end
+
+      desc "get_by_artist_id ARTIST_ID", "Fetch albums by artist ID"
+      def get_by_artist_id(artist_id)
+        make_request "album.get_by_artist_id(#{artist_id})", ->(a) { a.get(artist_id: artist_id) }
+      end
+
+      desc "get_by_album_id IDs", "Specify one or more IDs separated by spaces"
+      def get_by_album_id(*ids)
+        Lidarr::Mixins.require_that(ids.size > 0, "Need to specify at least one ID")
+        make_request "album.get_by_album_id(#{ids.join(",")})", ->(a) { a.get(album_ids: ids) }
+      end
+
+      desc "get_by_foreign_album_id ID", "Fetch album ID by foreign album ID"
+      def get_by_foreign_album_id(id)
+        make_request "album.get_by_foreign_album_id(#{id})", ->(a) { a.get(foreign_album_id: id) }
       end
 
       desc "search TERM", "search for albums"
       def search(term)
-        app_options = OptionHelpers.get_options(options)
-        Lidarr.logger.debug "album.search(term=#{term})"
-        results = Lidarr::API::Album.new(app_options).search(term)
-        Output.print_results(options.output, results)
+        make_request "album.search(term=#{term})", ->(a) { a.search(term) }
+      end
+
+      private
+
+      no_commands do
+        def make_request from, block
+          app_options = OptionHelpers.get_options(options)
+          Lidarr.logger.debug from
+          app = Lidarr::API::Album.new(app_options)
+          results = block.call(app)
+          Output.print_results(options.output, results)
+        end
       end
     end
 
