@@ -3,3 +3,7 @@ Album ID, Artist Name, Album Title, Monitored, Album Type, Release Date
 {{#albums}}
 {{id}}, "{{artist.artistName}}", "{{title}}", {{monitored}}, {{albumType}}, {{releaseDate}}
 {{/albums}}
+
+{{#paging}}
+Total Records: {{totalRecords}}, Page: {{page}}, Page Size: {{pageSize}}, Sort Key: {{sortKey}}, Sort Direction: {{sortDirection}}, Filters: {{filters}}
+{{/paging}}

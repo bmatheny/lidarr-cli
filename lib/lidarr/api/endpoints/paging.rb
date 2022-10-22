@@ -50,6 +50,17 @@ module Lidarr
         @records = records
       end
 
+      def to_h
+        {
+          page: page,
+          pageSize: page_size,
+          sortKey: sort_key,
+          sortDirection: sort_direction,
+          filters: filters,
+          totalRecords: total_records
+        }
+      end
+
       def self.from_response(response, &block)
         res = if response.is_a?(Hash)
           response

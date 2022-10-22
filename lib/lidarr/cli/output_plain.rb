@@ -1,8 +1,12 @@
 # frozen_string_literal: true
 
 require_relative "../api"
+require_relative "../data"
 require_relative "../logging"
 require_relative "../mixins"
+require_relative "views"
+
+require "mustache"
 require "thor"
 
 module Lidarr
@@ -14,88 +18,46 @@ module Lidarr
         include Lidarr::Mixins
 
         def print_results results
+          paging = nil
           if results.is_a?(Lidarr::API::PagingResource)
-            extras = "Page: #{results.page}, Total Records: #{results.total_records}, Filters: #{results.filters.inspect}, Sort Key: #{results.sort_key}"
+            paging = results.to_h
             results = results.records
           end
           results = Array(results)
 
           if results.empty?
-            puts "No results found"
+            Lidarr.logger.debug "No results"
             return
           end
 
           case peek(results)
           when Lidarr::API::AlbumResource
-            print_album_resources results
+            puts render(:albums, results, Views::NoOp, paging: paging)
           when Lidarr::API::ArtistResource
-            print_artist_resources results
+            puts render(:artists, results, Views::ArtistView)
           when Lidarr::API::TagDetailsResource
-            print_tagdetails_resources results
+            puts render(:tagdetails, results, Views::TagDetailsView)
           when Lidarr::API::TagResource
-            print_tag_resources results
+            puts render(:tags, results)
           else
             Lidarr.logger.fatal "Unknown result type: #{peek(results)}"
           end
-          puts("")
-          puts(extras) unless extras.nil?
         end # print_results
-
-        def print_album_resources results
-          print_structured_resource results, {
-            headers: ["ID", "Artist Name", "Album Title", "Monitored", "Album Type", "Release Date"],
-            generator: ->(res) { [res.id, res.artist.artistName, res.title, res.monitored, res.albumType, res.releaseDate] }
-          }
-        end
-
-        def print_artist_resources results
-          print_structured_resource results, {
-            headers: ["ID", "MB ID", "Artist Name", "Status", "Monitored (new?)", "Last Album", "Next Album"],
-            generator: ->(res) { [res.id, choose_first([res.mbId, res.foreignArtistId]), truncate(res.artistName, 16), res.status, "#{res.monitored} (#{res.monitorNewItems})", get_album(res.lastAlbum), get_album(res.nextAlbum)] }
-          }
-        end
-
-        def print_tag_resources results
-          print_structured_resource results, {
-            headers: ["ID", "Tag"],
-            generator: ->(res) { [res.id, res.label] }
-          }
-        end
-
-        def print_tagdetails_resources results
-          print_structured_resource results, {
-            headers: ["ID", "Tag", "Artist IDs", "Indexer IDs"],
-            generator: ->(res) { [res.id, res.label, safe_join(res.artistIds), safe_join(res.indexerIds)] }
-          }
-        end
 
         private
 
-        def choose_first ary
-          ary.find(&:itself)
-        end
-
-        def get_album maybe_album, max_length = 16
-          return "" if maybe_album.nil?
-          truncate("#{maybe_album.id},#{maybe_album.title}", max_length)
-        end
-
-        def print_structured_resource results, table_description
-          # TODO: If results.size == 1 we want a vertical layout not a horizontal one
-          shell = Thor::Shell::Basic.new
-          rows = [table_description[:headers]]
-          results.each do |res|
-            rows << table_description[:generator].call(res)
+        def render name, results, results_extended_by = Views::NoOp, new_methods = {}
+          view = Views::MustacheView.new
+          results.each { |row| row.extend(results_extended_by) }
+          view.define_singleton_method(name) { results }
+          new_methods.each do |method_name, return_value|
+            view.define_singleton_method(method_name) { return_value }
           end
-          shell.print_table(rows)
+          view.render(name)
         end
 
         def peek results
           results.first
-        end
-
-        def safe_join value, join_str = ","
-          Array(value).join(join_str)
         end
 
         def truncate string, max
