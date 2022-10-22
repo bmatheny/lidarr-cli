@@ -46,6 +46,8 @@ Everyone interacting in the Lidarr project's codebases, issue trackers, chat roo
 
 # Links
 
+* [Interactive Lidarr API](https://lidarr.audio/docs/api/#/Artist/get_api_v1_artist)
+* [Lidarr API json](https://raw.githubusercontent.com/bmatheny/lidarr-cli/main/lib/lidarr/data/openapi.json)
 * [testdouble-standard](https://github.com/testdouble/standard)
 
 # Configs
