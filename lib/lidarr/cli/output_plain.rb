@@ -59,7 +59,6 @@ module Lidarr
         def peek results
           results.first
         end
-
       end # Plain module
     end # Output module
   end # CLI module
