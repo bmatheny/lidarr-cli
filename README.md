@@ -48,8 +48,20 @@ Looks at yaml keys:
 
 * `api_key`
 * `headers`
+* `secure`
 * `url`
 * `verbose`
+
+Below is a sample yaml config at `~/.config/lidarr/cli.yml`
+
+```yaml
+---
+api_key: "blahblahblahblah"
+headers:
+  - "host: my.homelab.net"
+url: "https://172.16.1.15/lidarr"
+secure: false
+```
 
 # Done
 
@@ -68,9 +80,9 @@ Looks at yaml keys:
 
 # TODO
 
-* Add --format option
 * Create classes from json schema instead of code
 * lidarr artist edit --monitor=true/false --monitor-new-albums=enum --quality-profile=ID --metadata-profile=ID artistId
+* Good tests
 * blocklist
 * Check the queue, delete from the queue, clear the queue
 * Validate cli configs before using them
