@@ -1,32 +1,40 @@
 # Lidarr
 
-Welcome to your new gem! In this directory, you'll find the files you need to be able to package up your Ruby library into a gem. Put your Ruby code in the file `lib/lidarr`. To experiment with that code, run `bin/console` for an interactive prompt.
-
-TODO: Delete this and the text above, and describe your gem
-
-## Installation
-
-Install the gem and add to the application's Gemfile by executing:
-
-    $ bundle add lidarr
-
-If bundler is not being used to manage dependencies, install the gem by executing:
-
-    $ gem install lidarr
-
 ## Usage
 
-TODO: Write usage instructions here
+`bundle exec lidarr --help`
+
+```
+Commands:
+  lidarr album SUBCOMMAND [OPTIONS] [ARGS]   # work with albums
+  lidarr artist SUBCOMMAND [OPTIONS] [ARGS]  # work with artists
+  lidarr help [COMMAND]                      # Describe available commands or one specific command
+  lidarr tag SUBCOMMAND [OPTIONS] [ARGS]     # work with tags
+  lidarr version                             # prints lidarr CLI version
+  lidarr wanted SUBCOMMAND [OPTIONS] [ARGS]  # work with missing or cutoff albums
+
+Options:
+  -K, [--api-key=API_KEY]          # The API key to use with each request
+  -C, [--config=CONFIG]            # Configuration file with common options such as your api_key
+  -F, [--format=FORMAT]            # A format string to print output
+  -H, [--header=HEADER]            # Any additional header options to be passed
+  -O, [--output=OUTPUT]            # Output format to use, defaults to 'plain'
+                                   # Default: plain
+                                   # Possible values: plain, json, yml
+  -S, [--secure], [--no-secure]    # Whether we should connect securely to https endpoints or not
+  -U, [--url=URL]                  # URL to call, should include scheme, port, and any subfolder
+  -v, [--verbose], [--no-verbose]  # Increase the verbosity of the program
+```
 
 ## Development
 
-After checking out the repo, run `bin/setup` to install dependencies. Then, run `rake spec` to run the tests. You can also run `bin/console` for an interactive prompt that will allow you to experiment.
+After checking out the repo, run `bin/setup` to install dependencies. Then, run `rake test` to run the tests. You can also run `bin/console` for an interactive prompt that will allow you to experiment.
 
 To install this gem onto your local machine, run `bundle exec rake install`. To release a new version, update the version number in `version.rb`, and then run `bundle exec rake release`, which will create a git tag for the version, push git commits and the created tag, and push the `.gem` file to [rubygems.org](https://rubygems.org).
 
 ## Contributing
 
-Bug reports and pull requests are welcome on GitHub at https://github.com/[USERNAME]/lidarr. This project is intended to be a safe, welcoming space for collaboration, and contributors are expected to adhere to the [code of conduct](https://github.com/[USERNAME]/lidarr/blob/main/CODE_OF_CONDUCT.md).
+Bug reports and pull requests are welcome on GitHub at https://github.com/bmatheny/lidarr-cli. This project is intended to be a safe, welcoming space for collaboration, and contributors are expected to adhere to the [code of conduct](https://github.com/bmatheny/lidarr-cli/blob/main/CODE_OF_CONDUCT.md).
 
 ## License
 
@@ -34,7 +42,7 @@ The gem is available as open source under the terms of the [MIT License](https:/
 
 ## Code of Conduct
 
-Everyone interacting in the Lidarr project's codebases, issue trackers, chat rooms and mailing lists is expected to follow the [code of conduct](https://github.com/[USERNAME]/lidarr/blob/main/CODE_OF_CONDUCT.md).
+Everyone interacting in the Lidarr project's codebases, issue trackers, chat rooms and mailing lists is expected to follow the [code of conduct](https://github.com/bmatheny/lidarr-cli/blob/main/CODE_OF_CONDUCT.md).
 
 # Links
 
@@ -62,6 +70,8 @@ headers:
 url: "https://172.16.1.15/lidarr"
 secure: false
 ```
+
+If you set this up for your machine, the lidarr CLI should work out of the box
 
 # Done
 
