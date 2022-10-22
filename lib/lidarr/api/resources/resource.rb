@@ -21,6 +21,18 @@ module Lidarr
         self
       end
 
+      def to_h
+        o = {}
+        @_names.each do |key, type|
+          val = send(key.to_sym)
+          if type && val.respond_to?(:to_h)
+            val = val.to_h
+          end
+          o[key.to_sym] = val
+        end
+        o
+      end
+
       def to_s
         values = @_names.map do |key, _|
           "@#{key}=\"#{send(key.to_sym)}\""

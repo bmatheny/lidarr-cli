@@ -76,7 +76,7 @@ module Lidarr
           Lidarr.logger.debug from
           app = Lidarr::API::Album.new(app_options)
           results = block.call(app)
-          Output.print_results(options.output, results)
+          Output.print_results(options, results)
         end
       end
     end
@@ -113,7 +113,7 @@ module Lidarr
           Lidarr.logger.debug from
           app = Lidarr::API::Artist.new(app_options)
           results = block.call(app)
-          Output.print_results(options.output, results)
+          Output.print_results(options, results)
         end
       end
     end
@@ -130,7 +130,7 @@ module Lidarr
         else
           Lidarr::API::Tag.new(app_options).get(id)
         end
-        Output.print_results(options.output, results)
+        Output.print_results(options, results)
       end
     end
 
@@ -183,7 +183,7 @@ module Lidarr
           Lidarr.logger.debug make_from(src.to_s, id, paging_opts)
           app = Lidarr::API::Wanted.new(app_options)
           results = app.send(src, id: id, include_artist: options.include_artist, paging_resource: paging_opts)
-          Output.print_results(options.output, results)
+          Output.print_results(options, results)
         end
       end
     end # end class Wanted
@@ -194,11 +194,13 @@ module Lidarr
         desc: "The API key to use with each request"
       class_option :config, type: :string, aliases: "-C",
         desc: "Configuration file with common options such as your api_key"
+      class_option :format, type: :string, aliases: "-F",
+        desc: "A format string to print output"
       class_option :header, type: :string, aliases: "-H", repeatable: true,
         desc: "Any additional header options to be passed"
       # TODO add format option, allow specifying custom format instead of depending on canned output
       class_option :output, type: :string, aliases: "-O",
-        enum: %w[plain csv json yml], default: "plain",
+        enum: %w[plain json yml], default: "plain",
         desc: "Output format to use, defaults to 'plain'"
       class_option :secure, type: :boolean, aliases: "-S",
         desc: "Whether we should connect securely to https endpoints or not"

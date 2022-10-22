@@ -3,6 +3,7 @@ PATH
   specs:
     lidarr (0.1.0)
       httparty (~> 0.20)
+      mustache (~> 1.1.1)
       thor (~> 1.2)
 
 GEM
@@ -54,6 +55,7 @@ GEM
     mime-types-data (3.2022.0105)
     multi_test (1.1.0)
     multi_xml (0.6.0)
+    mustache (1.1.1)
     parallel (1.22.1)
     parser (3.1.2.1)
       ast (~> 2.4.1)
