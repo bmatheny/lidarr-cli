@@ -13,7 +13,7 @@ module Lidarr
     end
 
     def templates
-      File.join(getdir, "templates")
+      File.expand_path(File.join(__dir__, "cli", "templates"))
     end
 
     def template file

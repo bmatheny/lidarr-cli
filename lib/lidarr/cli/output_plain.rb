@@ -60,15 +60,6 @@ module Lidarr
           results.first
         end
 
-        def truncate string, max
-          if string.nil?
-            ""
-          elsif string.length > max
-            "#{string[0...max]}..."
-          else
-            string
-          end
-        end
       end # Plain module
     end # Output module
   end # CLI module
