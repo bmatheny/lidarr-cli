@@ -1,0 +1,9 @@
+ID, Artist Name, Source Title, Quality, Date
+
+{{#blocklist}}
+{{id}}, "{{artist.artistName}}", "{{sourceTitle}}", {{quality.quality.name}}, {{date}}
+{{/blocklist}}
+
+{{#paging}}
+Total Records: {{totalRecords}}, Page: {{page}}, Page Size: {{pageSize}}, Sort Key: {{sortKey}}, Sort Direction: {{sortDirection}}, Filters: {{filters}}
+{{/paging}}

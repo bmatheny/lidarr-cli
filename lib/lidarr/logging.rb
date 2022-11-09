@@ -17,7 +17,7 @@ module Lidarr
       return options[:logger] if options[:logger]
       trace = Lidarr::Option(options[:trace]).get_or_else(false)
       debug = Lidarr::Option(options[:debug]).get_or_else(false)
-      progname = Lidarr::Option(options[:progname] || options[:program]).get_or_else("unknown")
+      progname = Lidarr::Option(options[:progname] || options[:program]).get_or_else("lidarr")
       logfile = Lidarr::Option(options[:logfile]).get_or_else($stdout)
       logger = Logger.new(logfile)
       logger.level = if trace

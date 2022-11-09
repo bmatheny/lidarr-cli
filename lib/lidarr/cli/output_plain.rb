@@ -35,6 +35,8 @@ module Lidarr
             puts render(:albums, results, Views::NoOp, paging: paging)
           when Lidarr::API::ArtistResource
             puts render(:artists, results, Views::ArtistView)
+          when Lidarr::API::BlocklistResource
+            puts render(:blocklist, results, Views::NoOp, paging: paging)
           when Lidarr::API::TagDetailsResource
             puts render(:tagdetails, results, Views::TagDetailsView)
           when Lidarr::API::TagResource

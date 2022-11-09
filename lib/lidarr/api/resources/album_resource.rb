@@ -9,67 +9,25 @@ module Lidarr
     class AlbumModel < Resource
       def initialize
         super()
-        ["id",
-          "artistMetadataId",
-          "foreignAlbumId",
-          "oldForeignAlbumIds",
-          "title",
-          "overview",
-          "disambiguation",
-          "releaseDate",
-          "images",
-          "links",
-          "genres",
-          "albumType",
-          "secondaryTypes",
-          "ratings",
-          "cleanTitle",
-          "profileId",
-          "monitored",
-          "anyReleaseOk",
-          "lastInfoSync",
-          "added",
-          "addOptions",
-          "artistMetadata",
-          "albumReleases",
-          "artist"].each do |item|
-          name, type = item
-          register_property name, type
-        end
+        resourcify "Album"
       end
     end
 
     class AlbumResource < Resource
       def initialize
         super()
-        ["id",
-          "title",
-          "disambiguation",
-          "overview",
-          "artistId",
-          "foreignAlbumId",
-          "monitored",
-          "anyReleaseOk",
-          "profileId",
-          "duration",
-          "albumType",
-          "secondaryTypes",
-          "mediumCount",
-          "ratings", # /components/schemas/Ratings
+        resourcify "AlbumResource"
+      end
+
+      # Note to myself for later
+      def tmp1
+        ["ratings", # /components/schemas/Ratings
           "releaseDate", # date-time
           "releases", # Array</components/schemas/AlbumReleaseResource>
-          "genres",
           "media", # Array</components/schemas/MediumResource>
-          ["artist", ArtistResource], # /components/schemas/ArtistResource
           "images", # Array</components/schemas/MediaCover>
           "links", # Array</components/schemas/Links>
-          ["statistics", AlbumStatisticsResource], # /components/schemas/AlbumStatisticsResource
-          "addOptions", # /components/schemas/AddAlbumOptions
-          "remoteCover",
-          "grabbed"].each do |item|
-          name, type = item
-          register_property name, type
-        end
+          "addOptions"] # /components/schemas/AddAlbumOptions
       end
     end # class AlbumResource
   end

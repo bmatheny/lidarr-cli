@@ -45,6 +45,8 @@ module Lidarr
             "albums"
           when Lidarr::API::ArtistResource
             "artists"
+          when Lidarr::API::BlocklistResource
+            "blocklist"
           when Lidarr::API::TagDetailsResource
             "tags"
           when Lidarr::API::TagResource
@@ -53,7 +55,7 @@ module Lidarr
             Lidarr.logger.fatal "Unknown result type"
             exit 1
           end
-          block.call({type => results.map(&:to_h)})
+          block.call({type => res.map(&:to_h)})
         end
       end
 

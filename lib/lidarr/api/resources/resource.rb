@@ -51,6 +51,31 @@ module Lidarr
           instance_variable_get("@" + name.to_s)
         end
       end
+
+      def resourcify name
+        props = JSON.parse(File.read(Data.schema))
+          .fetch("components", {})
+          .fetch("schemas", {})
+          .fetch(name, {})
+          .fetch("properties", {})
+        props.each do |key, value|
+          if block_given?
+            yield(key, value)
+          else
+            type = if value.key?("$ref")
+              resource = value["$ref"].split("/").last
+              if Lidarr::API.const_defined?(resource)
+                Lidarr::API.const_get(resource)
+              else
+                Lidarr.logger.debug "No such resource #{resource}"
+                nil
+              end
+            end
+            Lidarr.logger.trace "Resourcifying #{key}/#{type}"
+            register_property key, type
+          end
+        end
+      end
     end
   end
 end

@@ -134,6 +134,36 @@ module Lidarr
       end
     end
 
+    class Blocklist < PagedSubcommand
+      desc "list", "list all items on blocklist"
+      def list
+        make_request(:list)
+      end
+
+      desc "delete IDs", "delete specified IDs, each separated by a space"
+      def delete(*ids)
+        require_that(ids.size > 0, "Need to specify at least one ID")
+        make_request(:delete, ids)
+      end
+
+      private
+
+      no_commands do
+        def make_from src, args, paging_opts
+          "blocklist.#{src}(#{args.join(", ")})"
+        end
+
+        def make_request from, *more
+          app_options = OptionHelpers.get_options(options)
+          paging_opts = OptionHelpers.thor_to_paging_options(options)
+          Lidarr.logger.debug make_from(from, more, paging_opts)
+          app = Lidarr::API::Blocklist.new(app_options)
+          results = app.send(from, *more)
+          Output.print_results(options, results) if results
+        end
+      end
+    end
+
     class Wanted < PagedSubcommand
       class_option :include_artist, type: :boolean, default: false,
         desc: "Include artist info"
@@ -219,6 +249,9 @@ module Lidarr
 
       desc "artist SUBCOMMAND [OPTIONS] [ARGS]", "work with artists"
       subcommand "artist", Artist
+
+      desc "blocklist SUBCOMMAND [OPTIONS] [ARGS]", "work with blocklist"
+      subcommand "blocklist", Blocklist
 
       desc "tag SUBCOMMAND [OPTIONS] [ARGS]", "work with tags"
       subcommand "tag", Tag
