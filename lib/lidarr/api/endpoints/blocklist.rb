@@ -26,7 +26,7 @@ module Lidarr
 
       def process_2xx_response response
         res = response.parsed_response
-        if res.empty? and response.code == 200
+        if res.empty? && response.code == 200
           return nil
         end
         if res.key?("records")

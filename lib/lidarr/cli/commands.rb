@@ -4,7 +4,6 @@ require_relative "option_helpers"
 require_relative "output"
 require_relative "../../lidarr"
 
-require "pp"
 require "thor"
 require "thor/group"
 
