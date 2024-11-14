@@ -13,7 +13,7 @@ module Lidarr
 
       def populate record
         @_names.each do |key, type|
-          next unless record.key?(key)
+          next unless (record.key?(key) and not record[key].nil?)
           val = record[key]
           val = type.new.populate(record[key]) unless type.nil?
           send("#{key}=".to_sym, val)

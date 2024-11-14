@@ -41,7 +41,8 @@ module Lidarr
           "added", # date-time
           "addOptions", # AddArtistOptions
           "ratings", # Ratings
-          ["statistics", ArtistStatisticsResource]].each do |item|
+          ["statistics", ArtistStatisticsResource]
+        ].each do |item|
           name, type = item
           register_property name, type
         end

@@ -33,7 +33,10 @@ module Lidarr
       end
 
       def process_2xx_response response
-        make_array(response.parsed_response).map { |r| ArtistResource.new.populate(r) }
+        last_item = nil
+        make_array(response.parsed_response).map do |record|
+          ArtistResource.new.populate(record)
+        end
       end
 
       private
